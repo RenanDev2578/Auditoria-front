@@ -1,124 +1,186 @@
-
-import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaIdCard,
+  FaCalendarAlt,
+} from "react-icons/fa";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    nome: "",
+    email: "",
+    senha: "",
+    confirmarSenha: "",
+    telefone: "",
+    cidade: "",
+    estado: "",
+    cpf: "",
+    dataNascimento: "",
+  });
+
+  // Função para atualizar 
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  // Função de envio do formulário
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Verifica se as senhas são iguais
+    if (formData.senha !== formData.confirmarSenha) {
+      alert("As senhas não coincidem!");
+      return;
+    }
+
+    // Armazena o cadastro no localStorage
+    localStorage.setItem("userData", JSON.stringify(formData));
+
+    alert("Cadastro realizado com sucesso!");
+    navigate("/login");
+  };
+
   return (
-    <div className="bg-white p-8 rounded-xl shadow-lg w-[400px]">
-      {/*  ícone do topo */}
+    <div className="bg-white p-8 rounded-xl shadow-lg w-[450px] overflow-y-auto max-h-[90vh]">
+      {/* Ícone do topo */}
       <div className="flex justify-center items-center mb-4">
         <div className="bg-purple-600 p-2 rounded-full">
           <FaUser className="text-white text-3xl" />
         </div>
       </div>
 
+      {/* Título */}
       <h2 className="text-center text-2xl font-bold mb-1 text-gray-800">
         Criar conta
       </h2>
-      <p className="text-center text-sm text-gray-800 mb-6">
-        Junte-se à nossa plataforma de doações
+      <p className="text-center text-sm text-gray-600 mb-6">
+        Preencha todos os campos para continuar
       </p>
 
-      <form className="space-y-4">
-        {/* Campo Nome completo */}
+      {/* Formulário */}
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        {[
+          {
+            id: "nome",
+            label: "Nome completo",
+            icon: <FaUser />,
+            type: "text",
+          },
+          { id: "email", label: "E-mail", icon: <FaEnvelope />, type: "email" },
+          { id: "telefone", label: "Telefone", icon: <FaPhone />, type: "tel" },
+          { id: "cpf", label: "CPF", icon: <FaIdCard />, type: "text" },
+          {
+            id: "cidade",
+            label: "Cidade",
+            icon: <FaMapMarkerAlt />,
+            type: "text",
+          },
+        ].map((field) => (
+          <div key={field.id} className="space-y-1">
+            <label
+              htmlFor={field.id}
+              className="text-sm font-medium text-gray-700"
+            >
+              {field.label}
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                {field.icon}
+              </span>
+              <input
+                id={field.id}
+                type={field.type}
+                value={formData[field.id]}
+                onChange={handleChange}
+                required
+                placeholder={field.label}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+          </div>
+        ))}
+
+        {/* Estado */}
+        <div className="space-y-1">
+          <label htmlFor="estado" className="text-sm font-medium text-gray-700">
+            Estado
+          </label>
+          <input
+            type="text"
+            id="estado"
+            placeholder="UF"
+            value={formData.estado}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+          />
+        </div>
+
+        {/* Data de nascimento */}
         <div className="space-y-1">
           <label
-            htmlFor="fullName"
+            htmlFor="dataNascimento"
             className="text-sm font-medium text-gray-700"
           >
-            Nome completo
+            Data de nascimento
           </label>
           <div className="relative">
-            <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
-              type="text"
-              id="fullName"
-              placeholder="Seu nome completo"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              type="date"
+              id="dataNascimento"
+              value={formData.dataNascimento}
+              onChange={handleChange}
+              required
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
             />
           </div>
         </div>
 
-        {/* E-mail */}
+        {/* Senha */}
         <div className="space-y-1">
-          <label htmlFor="email" className="text-sm font-medium text-gray-700">
-            E-mail
-          </label>
-          <div className="relative">
-            <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="email"
-              id="email"
-              placeholder="seu@email.com"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-          </div>
-        </div>
-
-        {/*  Tipo de usuário */}
-        <div className="space-y-1">
-          <label
-            htmlFor="userType"
-            className="text-sm font-medium text-gray-700"
-          >
-            Tipo de usuário
-          </label>
-          <select
-            id="userType"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-purple-500"
-          >
-            <option>Selecione o tipo de usuário</option>
-            <option>Doador</option>
-            <option>Instituição</option>
-          </select>
-        </div>
-
-        {/*  Senha */}
-        <div className="space-y-1">
-          <label
-            htmlFor="password"
-            className="text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="senha" className="text-sm font-medium text-gray-700">
             Senha
           </label>
           <div className="relative">
             <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="password"
-              id="password"
+              id="senha"
               placeholder="********"
-              className="w-full pl-10 pr-10 py-2 border border-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              value={formData.senha}
+              onChange={handleChange}
+              required
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
             />
-            {/* olho */}
-            <FaEyeSlash className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer" />
           </div>
         </div>
 
-        {/* Campo Confirmar senha */}
+        {/* Confirmar senha */}
         <div className="space-y-1">
           <label
-            htmlFor="confirmPassword"
+            htmlFor="confirmarSenha"
             className="text-sm font-medium text-gray-700"
           >
             Confirmar senha
           </label>
-          <div className="relative">
-            <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="password"
-              id="confirmPassword"
-              placeholder="********"
-              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            <FaEye className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer" />
-          </div>
-        </div>
-
-        {/* Link para login */}
-        <div className="text-center text-sm">
-          <span className="text-gray-500">Já tem uma conta? </span>
-          <a href="#" className="text-purple-600 hover:underline">
-            Faça login
-          </a>
+          <input
+            type="password"
+            id="confirmarSenha"
+            placeholder="********"
+            value={formData.confirmarSenha}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+          />
         </div>
 
         {/* Botão de cadastro */}
@@ -128,6 +190,17 @@ const RegisterForm = () => {
         >
           Cadastrar
         </button>
+
+        {/* Link para login */}
+        <div className="text-center text-sm">
+          <span className="text-gray-600">Já tem uma conta? </span>
+          <a
+            href="/login"
+            className="text-purple-600 hover:underline font-medium"
+          >
+            Faça login
+          </a>
+        </div>
       </form>
     </div>
   );
